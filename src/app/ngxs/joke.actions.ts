@@ -68,7 +68,7 @@ export class JokeState {
         if (state.favourites.indexOf(joke) === -1) {
             ctx.setState({
                 ...state,
-                favourites: [...state.favourites, joke],
+                favourites: [...state.favourites, joke].slice(-10), // restrict size of favourite list
             });
         }
     }
