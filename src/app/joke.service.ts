@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {Joke} from './app.types';
 import {HttpClient} from '@angular/common/http';
 import {environment} from '../environments/environment';
 import {map} from 'rxjs/internal/operators';
@@ -13,15 +12,12 @@ export class JokeService {
     constructor(private http: HttpClient, ) {
     }
 
-    fetchJokes(amount: number = 10): Observable<Joke[]> {
+    fetchJokes(amount: number = 10): Observable<string[]> {
         return this.http.get<ApiResponse>(environment.api + amount)
             .pipe(
                 map(({value}) => {
                     if (value && value.length > 0) {
-                        return value.map(entry => ({
-                            id: entry.id,
-                            joke: entry.joke
-                        }));
+                        return value.map(({joke}) => joke);
                     } else {
                         return [];
                     }

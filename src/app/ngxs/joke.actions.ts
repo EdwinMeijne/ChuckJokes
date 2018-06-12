@@ -10,9 +10,23 @@ export class FetchRandomJokes {
     }
 }
 
+export class AddFavourite {
+    static readonly type = '[Jokes] Add Favourite';
+
+    constructor(public joke: string) {
+    }
+}
+
+export class RemoveFavourite {
+    static readonly type = '[Jokes] Remove Favourite';
+
+    constructor(public joke: string) {
+    }
+}
+
 interface JokeStateModel {
-    jokes: Joke[];
-    favourites: Joke[];
+    jokes: string[];
+    favourites: string[];
 }
 
 @State<JokeStateModel>({
@@ -25,12 +39,15 @@ interface JokeStateModel {
 export class JokeState {
     constructor(private jokeService: JokeService) {}
 
-    @Selector() static jokes(state: JokeStateModel) {
-        return state.jokes;
+    @Selector() static jokes(state: JokeStateModel): Joke[] {
+        return state.jokes.map(joke => ({
+            joke,
+            isFavourite: state.favourites.indexOf(joke) !== -1,
+        }));
     }
 
-    @Selector() static favourites(state: JokeStateModel) {
-        return state.favourites;
+    @Selector() static favourites(state: JokeStateModel): Joke[] {
+        return state.favourites.map(joke => ({joke, isFavourite: true}));
     }
 
     @Action(FetchRandomJokes, { cancelUncompleted: true }) // the call cancels when clicked again before complete
@@ -44,4 +61,25 @@ export class JokeState {
                 });
             }));
     }
+
+    @Action(AddFavourite)
+    addFavourite(ctx: StateContext<JokeStateModel>, {joke}: AddFavourite) {
+        const state = ctx.getState();
+        if (state.favourites.indexOf(joke) === -1) {
+            ctx.setState({
+                ...state,
+                favourites: [...state.favourites, joke],
+            });
+        }
+    }
+
+    @Action(RemoveFavourite)
+    removeFavourite(ctx: StateContext<JokeStateModel>, {joke}: RemoveFavourite) {
+        const state = ctx.getState();
+        ctx.setState({
+            ...state,
+            favourites: state.favourites.filter(favourite => favourite !== joke),
+        });
+    }
+
 }

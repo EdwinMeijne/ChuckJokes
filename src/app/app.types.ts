@@ -1,4 +1,4 @@
 export interface Joke {
-  id: number;
-  joke: string;
+    joke: string;
+    isFavourite: boolean;
 }
