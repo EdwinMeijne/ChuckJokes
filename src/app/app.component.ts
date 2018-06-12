@@ -1,10 +1,21 @@
 import { Component } from '@angular/core';
+import {Select, Store} from '@ngxs/store';
+import {JokeState} from './ngxs/joke.actions';
+import {Joke} from './app.types';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
+  template: `
+      <app-joke-fetch-button></app-joke-fetch-button>
+      <app-joke-list [jokes]="jokes$ | async"></app-joke-list>
+  `,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
+    @Select(JokeState.jokes) jokes$: Observable<Joke[]>;
+
+    constructor(
+        private store: Store,
+    ) {}
 }
