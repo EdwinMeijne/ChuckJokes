@@ -8,6 +8,7 @@ import {NgxsModule} from '@ngxs/store';
 import {JokeState} from './ngxs/joke.actions';
 import {HttpClientModule} from '@angular/common/http';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
+import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
         NgxsModule.forRoot([
             JokeState,
         ]),
+        NgxsStoragePluginModule.forRoot({key: 'jokes.favourites'}),
         NgxsReduxDevtoolsPluginModule.forRoot(),
     ],
     providers: [],
