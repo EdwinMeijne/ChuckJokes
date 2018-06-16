@@ -10,23 +10,26 @@ export class FetchRandomJokes {
     }
 }
 
-export class AddFavourite {
-    static readonly type = '[Jokes] Add Favourite';
+export class ToggleFavourite {
+    static readonly type = '[Jokes] Toggle Favourite';
 
     constructor(public joke: string) {
     }
 }
 
-export class RemoveFavourite {
-    static readonly type = '[Jokes] Remove Favourite';
+export class SetAutoAdd {
+    static readonly type = '[Jokes] Set Auto Add';
 
-    constructor(public joke: string) {
+    constructor(public active: boolean) {
     }
 }
+
+const FAVOURITE_MAX_SIZE = 10;
 
 interface JokeStateModel {
     jokes: string[];
     favourites: string[];
+    autoAdd: boolean;
 }
 
 @State<JokeStateModel>({
@@ -34,23 +37,38 @@ interface JokeStateModel {
     defaults: {
         jokes: [],
         favourites: [],
+        autoAdd: false,
     },
 })
 export class JokeState {
-    constructor(private jokeService: JokeService) {}
+    constructor(
+        private jokeService: JokeService
+    ) {}
 
-    @Selector() static jokes(state: JokeStateModel): Joke[] {
+    @Selector()
+    static jokes(state: JokeStateModel): Joke[] {
         return state.jokes.map(joke => ({
             joke,
             isFavourite: state.favourites.indexOf(joke) !== -1,
         }));
     }
 
-    @Selector() static favourites(state: JokeStateModel): Joke[] {
+    @Selector()
+    static favourites(state: JokeStateModel): Joke[] {
         return state.favourites.map(joke => ({joke, isFavourite: true}));
     }
 
-    @Action(FetchRandomJokes, { cancelUncompleted: true }) // the call cancels when clicked again before complete
+    @Selector()
+    static favouritesFull(state: JokeStateModel): boolean {
+        return state.favourites.length >= FAVOURITE_MAX_SIZE;
+    }
+
+    @Selector()
+    static autoAdd(state: JokeStateModel): { active: boolean } {
+        return {active: state.autoAdd};
+    }
+
+    @Action(FetchRandomJokes, {cancelUncompleted: true}) // the call cancels when clicked again before complete
     fetchRndStart(ctx: StateContext<JokeStateModel>, {amount}: FetchRandomJokes) {
         return this.jokeService.fetchJokes(amount)
             .pipe(tap(jokes => {
@@ -62,24 +80,28 @@ export class JokeState {
             }));
     }
 
-    @Action(AddFavourite)
-    addFavourite(ctx: StateContext<JokeStateModel>, {joke}: AddFavourite) {
+    @Action(ToggleFavourite)
+    toggleFavourite(ctx: StateContext<JokeStateModel>, {joke}: ToggleFavourite) {
         const state = ctx.getState();
         if (state.favourites.indexOf(joke) === -1) {
             ctx.setState({
                 ...state,
-                favourites: [...state.favourites, joke].slice(-10), // restrict size of favourite list
+                favourites: [...state.favourites, joke].slice(-FAVOURITE_MAX_SIZE), // restrict size of favourite list
+            });
+        } else {
+            ctx.setState({
+                ...state,
+                favourites: state.favourites.filter(favourite => favourite !== joke),
             });
         }
     }
 
-    @Action(RemoveFavourite)
-    removeFavourite(ctx: StateContext<JokeStateModel>, {joke}: RemoveFavourite) {
+    @Action(SetAutoAdd)
+    setAutoAdd(ctx: StateContext<JokeStateModel>, {active}: SetAutoAdd) {
         const state = ctx.getState();
         ctx.setState({
             ...state,
-            favourites: state.favourites.filter(favourite => favourite !== joke),
+            autoAdd: active,
         });
     }
-
 }

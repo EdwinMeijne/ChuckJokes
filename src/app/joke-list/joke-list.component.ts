@@ -12,7 +12,7 @@ import {Joke} from '../app.types';
     `,
     styles: [`
         .joke {
-            list-style: none;
+            list-style: decimal-leading-zero;
         }
 
         .joke--favourite {
