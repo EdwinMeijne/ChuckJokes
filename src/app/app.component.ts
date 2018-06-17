@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
-import {ToggleFavourite, JokeState, RemoveFavourite, SetAutoAdd} from './ngxs/joke.actions';
+import {ToggleFavourite, JokeState, SetAutoAdd} from './ngxs/joke.actions';
 import {EMPTY, interval} from 'rxjs';
 import {distinctUntilKeyChanged, filter, finalize, mergeMap, switchMap, takeUntil, tap} from 'rxjs/internal/operators';
 import {JokeService} from './joke.service';
@@ -8,6 +8,7 @@ import {JokeService} from './joke.service';
 @Component({
   selector: 'app-root',
   template: `
+      <app-login-box></app-login-box>
       <app-joke-fetch-button></app-joke-fetch-button>
       <app-dispatch-timer-toggle></app-dispatch-timer-toggle>
       <app-joke-list [jokes]="jokes$ | async" (jokeClicked)="toggleFavourite($event)"></app-joke-list>

@@ -10,6 +10,8 @@ import {HttpClientModule} from '@angular/common/http';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {NgxsStoragePluginModule} from '@ngxs/storage-plugin';
 import {DispatchTimerToggleComponent} from './dispatch-timer-toggle/dispatch-timer-toggle.component';
+import { LoginBoxComponent } from './login-box/login-box.component';
+import {ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
     declarations: [
@@ -17,6 +19,7 @@ import {DispatchTimerToggleComponent} from './dispatch-timer-toggle/dispatch-tim
         JokeListComponent,
         JokeFetchButtonComponent,
         DispatchTimerToggleComponent,
+        LoginBoxComponent,
     ],
     imports: [
         BrowserModule,
@@ -26,6 +29,7 @@ import {DispatchTimerToggleComponent} from './dispatch-timer-toggle/dispatch-tim
         ]),
         NgxsStoragePluginModule.forRoot({key: 'jokes.favourites'}),
         NgxsReduxDevtoolsPluginModule.forRoot(),
+        ReactiveFormsModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

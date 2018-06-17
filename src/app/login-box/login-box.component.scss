@@ -1,0 +1,13 @@
+.requirements {
+    color: grey;
+    list-style: none;
+
+    &--dirty {
+        color: green;
+
+    }
+
+    &--invalid {
+        color: red;
+    }
+}
